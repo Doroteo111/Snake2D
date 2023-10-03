@@ -7,6 +7,7 @@ public class Snake : MonoBehaviour
     private Vector2Int gridPosition;
     private Vector2Int startGridPosition;
     private Vector2Int gridMoveDirection;
+    
 
     private float horizontalInput, verticalInput;
 
@@ -23,6 +24,8 @@ public class Snake : MonoBehaviour
 
     private void Update()
     {
+       
+        HandleMoveDirection();
         gridMoveTimer += Time.deltaTime;
         if (gridMoveTimer >= gridMoveTimerMax)
         {
@@ -30,15 +33,17 @@ public class Snake : MonoBehaviour
             gridMoveTimer -= gridMoveTimerMax;
 
             transform.position = new Vector3(gridPosition.x, gridPosition.y, 0);
+
         }
     }
+    
     private void HandleMoveDirection()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
         // Cambio dirección hacia arriba
-        if (verticalInput > 0) // Si he pulsado hacia arriba (W o Flecha Arriba)
+        if (verticalInput > 0 ) // Si he pulsado hacia arriba (W o Flecha Arriba)
         {
             if (gridMoveDirection.y != 1) // Si iba en horizontal
             {
@@ -49,10 +54,35 @@ public class Snake : MonoBehaviour
         }
 
         // Cambio dirección hacia abajo
+        if (verticalInput < 0)
+        {
+            if (gridMoveDirection.x != 1)
+            {
+                gridMoveDirection.x = 0;
+                gridMoveDirection.y = -1;
+            }
+        }
 
         // Cambio dirección hacia derecha
+        if (horizontalInput > 0)
+        {
+            if (gridMoveDirection.x != 1)
+            {
+                gridMoveDirection.x = 1;
+                gridMoveDirection.y = 0;
+            }
+           
+        }
 
         // Cambio dirección hacia izquierda
+        if (horizontalInput < 0)
+        {
+            if (gridMoveDirection.x != 1)
+            {
+                gridMoveDirection.x = -1;
+                gridMoveDirection.y = 0;
+            }
+        }
     }
 }
-}
+
