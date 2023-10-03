@@ -32,4 +32,27 @@ public class Snake : MonoBehaviour
             transform.position = new Vector3(gridPosition.x, gridPosition.y, 0);
         }
     }
+    private void HandleMoveDirection()
+    {
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = Input.GetAxisRaw("Vertical");
+
+        // Cambio dirección hacia arriba
+        if (verticalInput > 0) // Si he pulsado hacia arriba (W o Flecha Arriba)
+        {
+            if (gridMoveDirection.y != 1) // Si iba en horizontal
+            {
+                // Cambio la dirección hacia arriba
+                gridMoveDirection.x = 0;
+                gridMoveDirection.y = 1;
+            }
+        }
+
+        // Cambio dirección hacia abajo
+
+        // Cambio dirección hacia derecha
+
+        // Cambio dirección hacia izquierda
+    }
+}
 }
