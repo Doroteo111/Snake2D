@@ -9,7 +9,7 @@ public class GameAssets : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
+        if (Instance != null)
         {
             Debug.LogError(message: "There is more thsn one Instane");
         }
