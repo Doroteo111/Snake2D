@@ -7,7 +7,7 @@ public class Snake : MonoBehaviour
     private Vector2Int gridPosition;
     private Vector2Int startGridPosition;
     private Vector2Int gridMoveDirection;
-    
+
 
     private float horizontalInput, verticalInput;
 
