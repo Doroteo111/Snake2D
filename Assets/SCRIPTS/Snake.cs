@@ -8,7 +8,6 @@ public class Snake : MonoBehaviour
     private Vector2Int startGridPosition;
     private Vector2Int gridMoveDirection;
 
-
     private float horizontalInput, verticalInput;
 
     private float gridMoveTimer;
@@ -20,12 +19,17 @@ public class Snake : MonoBehaviour
         gridPosition = startGridPosition;
 
         gridMoveDirection = new Vector2Int(0, 1); // Dirección arriba por defecto
+        transform.eulerAngles = Vector3.zero;
     }
 
     private void Update()
     {
-       
         HandleMoveDirection();
+        HandleGridMovement();
+    }
+
+    private void HandleGridMovement()
+    {
         gridMoveTimer += Time.deltaTime;
         if (gridMoveTimer >= gridMoveTimerMax)
         {
@@ -33,30 +37,32 @@ public class Snake : MonoBehaviour
             gridMoveTimer -= gridMoveTimerMax;
 
             transform.position = new Vector3(gridPosition.x, gridPosition.y, 0);
-
+            transform.eulerAngles = new Vector3(0, 0, GetAngleFromVector(gridMoveDirection));
         }
     }
-    
+
     private void HandleMoveDirection()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
         // Cambio dirección hacia arriba
-        if (verticalInput > 0 ) // Si he pulsado hacia arriba (W o Flecha Arriba)
+        if (verticalInput > 0) // Si he pulsado hacia arriba (W o Flecha Arriba)
         {
-            if (gridMoveDirection.y != 1) // Si iba en horizontal
+            if (gridMoveDirection.x != 0) // Si iba en horizontal
             {
-                // Cambio la dirección hacia arriba
+                // Cambio la dirección hacia arriba (0,1)
                 gridMoveDirection.x = 0;
                 gridMoveDirection.y = 1;
             }
         }
 
         // Cambio dirección hacia abajo
+        // Input es abajo?
         if (verticalInput < 0)
         {
-            if (gridMoveDirection.x != 1)
+            // Mi dirección hasta ahora era horizontal
+            if (gridMoveDirection.x != 0)
             {
                 gridMoveDirection.x = 0;
                 gridMoveDirection.y = -1;
@@ -66,23 +72,35 @@ public class Snake : MonoBehaviour
         // Cambio dirección hacia derecha
         if (horizontalInput > 0)
         {
-            if (gridMoveDirection.x != 1)
+            if (gridMoveDirection.y != 0)
             {
                 gridMoveDirection.x = 1;
                 gridMoveDirection.y = 0;
             }
-           
         }
 
         // Cambio dirección hacia izquierda
         if (horizontalInput < 0)
         {
-            if (gridMoveDirection.x != 1)
+            if (gridMoveDirection.y != 0)
             {
                 gridMoveDirection.x = -1;
                 gridMoveDirection.y = 0;
             }
         }
     }
+
+    private float GetAngleFromVector(Vector2Int direction)
+    {
+        float degrees = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        if (degrees < 0)
+        {
+            degrees += 360;
+        }
+
+        return degrees - 90;
+    }
+
+
 }
 
