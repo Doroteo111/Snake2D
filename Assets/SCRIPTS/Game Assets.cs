@@ -5,15 +5,18 @@ using UnityEngine;
 public class GameAssets : MonoBehaviour
 {
     public static GameAssets Instance { get; private set; }
+
     public Sprite snakeHeadSprite;
     public Sprite foodSprite;
 
     private void Awake()
     {
+        // Singleton
         if (Instance != null)
         {
-            Debug.LogError(message: "There is more thsn one Instane");
+            Debug.LogError("There is more than one Instance");
         }
+
         Instance = this;
     }
 }

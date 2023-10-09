@@ -5,6 +5,7 @@ using UnityEngine;
 public class LevelGrid : MonoBehaviour
 {
     private Vector2Int foodGridPosition;
+    private GameObject foodGameObject;
 
     private int width;
     private int height;
@@ -13,6 +14,17 @@ public class LevelGrid : MonoBehaviour
     {
         width = w;
         height = h;
+
+        SpawnFood();
+    }
+
+    public void SnakeMoved(Vector2Int snakeGridPosition)
+    {
+        if (snakeGridPosition == foodGridPosition)
+        {
+            Object.Destroy(foodGameObject);
+            SpawnFood();
+        }
     }
 
     private void SpawnFood()
@@ -21,7 +33,7 @@ public class LevelGrid : MonoBehaviour
             Random.Range(-width / 2, width / 2),
             Random.Range(-height / 2, height / 2));
 
-        GameObject foodGameObject = new GameObject("Food");
+        foodGameObject = new GameObject("Food");
         SpriteRenderer foodSpriteRenderer = foodGameObject.AddComponent<SpriteRenderer>();
         foodSpriteRenderer.sprite = GameAssets.Instance.foodSprite;
         foodGameObject.transform.position = new Vector3(foodGridPosition.x, foodGridPosition.y, 0);
