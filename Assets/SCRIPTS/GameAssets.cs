@@ -18,5 +18,5 @@ public class GameAssets : MonoBehaviour
         }
 
         Instance = this;
-    }
+    } 
 }

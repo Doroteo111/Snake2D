@@ -10,11 +10,17 @@ public class LevelGrid : MonoBehaviour
     private int width;
     private int height;
 
+    private Snake snake;
+
     public LevelGrid(int w, int h)
     {
         width = w;
         height = h;
+    }
 
+    public void Setup(Snake snake)
+    {
+        this.snake = snake;
         SpawnFood();
     }
 
@@ -29,9 +35,19 @@ public class LevelGrid : MonoBehaviour
 
     private void SpawnFood()
     {
-        foodGridPosition = new Vector2Int(
-            Random.Range(-width / 2, width / 2),
-            Random.Range(-height / 2, height / 2));
+        // while (condicion){
+        // cosas
+        // }
+
+        // { cosas }
+        // while (condicion)
+
+        do
+        {
+            foodGridPosition = new Vector2Int(
+                Random.Range(-width / 2, width / 2),
+                Random.Range(-height / 2, height / 2));
+        } while (foodGridPosition == snake.GetGridPosition());
 
         foodGameObject = new GameObject("Food");
         SpriteRenderer foodSpriteRenderer = foodGameObject.AddComponent<SpriteRenderer>();
