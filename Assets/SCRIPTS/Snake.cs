@@ -106,7 +106,7 @@ public class Snake : MonoBehaviour
         }
 
         return degrees - 90;
-    }
 
+    }
 }
 
