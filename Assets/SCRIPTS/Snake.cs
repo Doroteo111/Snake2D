@@ -1,12 +1,62 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Snake : MonoBehaviour
 {
-    private Vector2Int gridPosition;
+    private enum Direction //nuevo tipo de variale --> enumerado
+    {
+        Left,
+        Right, 
+        Down,
+        Up
+    }
+
+    private class SnakeBodyPart
+    {
+        private Vector2Int gridPosition; // Posición 2D de la SnakeBodyPart
+        private Transform transform;
+
+        public SnakeBodyPart(int bodyIndex)
+        {
+            GameObject snakeBodyPartGameObject = new GameObject("Snake Body",
+                typeof(SpriteRenderer));
+            SpriteRenderer snakeBodyPartSpriteRenderer = snakeBodyPartGameObject.GetComponent<SpriteRenderer>();
+            snakeBodyPartSpriteRenderer.sprite =
+                GameAssets.Instance.snakeBodySprite;
+            snakeBodyPartSpriteRenderer.sortingOrder = -bodyIndex;
+            transform = snakeBodyPartGameObject.transform;
+        }
+
+        public void SetGridPosition(Vector2Int gridPosition)
+        {
+            this.gridPosition = gridPosition; // Posición 2D de la SnakeBodyPart
+            transform.position = new Vector3(gridPosition.x, gridPosition.y, 0); // Posición 3D del G.O.
+        }
+    }
+
+    private class SnakeMovePosition //saber la direccion que tiene que mirar cada parte del cuerpo
+    {
+        private Vector2Int gridPosition;
+        private Direction direction;
+        public SnakeMovePosition(Vector2Int gridPosition, Direction direction)
+        {
+            //necesito que las lean
+            this.gridPosition = gridPosition;
+            this.direction = direction;
+        }
+
+        public Vector2Int GetGridPosition ()
+        {
+            return gridPosition;
+        }
+    }
+
+    private Vector2Int gridPosition; //posicion cabeza 2d
     private Vector2Int startGridPosition;
-    private Vector2Int gridMoveDirection;
+    //private Vector2Int gridMoveDirection; //direccion de la cabeza
+    private Direction gridMoveDirection;
 
     private float horizontalInput, verticalInput;
 
@@ -16,18 +66,21 @@ public class Snake : MonoBehaviour
     private LevelGrid levelGrid;
 
     private int snakeBodySize;
-    private List<Vector2Int> snakeMovePositionsList;
+    // private List<Vector2Int> snakeMovePositionsList; //posiciones parte del cuerpo (por orden) CAMBIA ABAJO
+    private List<SnakeMovePosition> snakeMovePositionsList; //posicion 2d + direccion a la que mirar
+    private List<SnakeBodyPart> snakeBodyPartsList; //lista snakeBoyPart
 
     private void Awake()
     {
         startGridPosition = new Vector2Int(0, 0);
         gridPosition = startGridPosition;
 
-        gridMoveDirection = new Vector2Int(0, 1); // Dirección arriba por defecto
+        gridMoveDirection = Direction.Up; // Dirección arriba por defecto
         transform.eulerAngles = Vector3.zero; // Rotación arriba por defecto
 
         snakeBodySize = 0;
-        snakeMovePositionsList = new List<Vector2Int>();
+        snakeMovePositionsList = new List<SnakeMovePosition>();
+        snakeBodyPartsList=new List<SnakeBodyPart>(); //crear lista vacia
     }
 
     private void Update()
@@ -49,24 +102,55 @@ public class Snake : MonoBehaviour
         {
             gridMoveTimer -= gridMoveTimerMax;
 
-            snakeMovePositionsList.Insert(0, gridPosition);
-            gridPosition += gridMoveDirection;
+            SnakeMovePosition snakeMovePosition= new SnakeMovePosition(gridPosition, gridMoveDirection); // direccion y posiciond de la cabeza
+            snakeMovePositionsList.Insert(0, snakeMovePosition); //enchufando la ultima posicion actual se guarda en la lista--> pasa a ser la primera parte cu
 
-            if (snakeMovePositionsList.Count > snakeBodySize)
+            Vector2Int gridMoveDirectionVector;
+            switch (gridMoveDirection)
+            {
+                default:
+                case Direction.Left:
+                    gridMoveDirectionVector = new Vector2Int(-1, 0);
+                    break;
+                case Direction.Right:
+                    gridMoveDirectionVector = new Vector2Int(1, 0);
+                    break;
+                case Direction.Down:
+                    gridMoveDirectionVector = new Vector2Int(0, -1);
+                    break;
+                case Direction.Up:
+                    gridMoveDirectionVector = new Vector2Int(0,1);
+                    break;
+
+            }
+
+            gridPosition += gridMoveDirectionVector; 
+
+            // ¿He comido comida?
+            bool snakeAteFod = levelGrid.TrySnakeEatFood(gridPosition);
+            if (snakeAteFod)
+            {
+                //cuerpo crece
+                snakeBodySize++;
+                //llamada la función
+                CreateBodyPart();
+            }
+
+            if (snakeMovePositionsList.Count > snakeBodySize) //elimina la coordenada restante
             {
                 snakeMovePositionsList.
                     RemoveAt(snakeMovePositionsList.Count - 1);
             }
 
             transform.position = new Vector3(gridPosition.x, gridPosition.y, 0);
-            transform.eulerAngles = new Vector3(0, 0, GetAngleFromVector(gridMoveDirection));
+            transform.eulerAngles = new Vector3(0, 0, GetAngleFromVector(gridMoveDirectionVector));
 
-            // ¿He comido comida?
-            levelGrid.SnakeMoved(gridPosition);
+            UpdateBodyParts(); 
+        
         }
     }
 
-    private void HandleMoveDirection()
+    private void HandleMoveDirection() //relativo al movimeitno 2d
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
@@ -74,11 +158,10 @@ public class Snake : MonoBehaviour
         // Cambio dirección hacia arriba
         if (verticalInput > 0) // Si he pulsado hacia arriba (W o Flecha Arriba)
         {
-            if (gridMoveDirection.x != 0) // Si iba en horizontal
+            if (gridMoveDirection != Direction.Down) // Si iba en horizontal
             {
                 // Cambio la dirección hacia arriba (0,1)
-                gridMoveDirection.x = 0;
-                gridMoveDirection.y = 1;
+                gridMoveDirection = Direction.Up;
             }
         }
 
@@ -87,30 +170,27 @@ public class Snake : MonoBehaviour
         if (verticalInput < 0)
         {
             // Mi dirección hasta ahora era horizontal
-            if (gridMoveDirection.x != 0)
+            if (gridMoveDirection != Direction.Up)
             {
-                gridMoveDirection.x = 0;
-                gridMoveDirection.y = -1;
+                gridMoveDirection = Direction.Down;
             }
         }
 
         // Cambio dirección hacia derecha
         if (horizontalInput > 0)
         {
-            if (gridMoveDirection.y != 0)
+            if (gridMoveDirection != Direction.Left)
             {
-                gridMoveDirection.x = 1;
-                gridMoveDirection.y = 0;
+                gridMoveDirection = Direction.Right;
             }
         }
 
         // Cambio dirección hacia izquierda
         if (horizontalInput < 0)
         {
-            if (gridMoveDirection.y != 0)
+            if (gridMoveDirection != Direction.Right)
             {
-                gridMoveDirection.x = -1;
-                gridMoveDirection.y = 0;
+                gridMoveDirection = Direction.Left;
             }
         }
     }
@@ -129,6 +209,32 @@ public class Snake : MonoBehaviour
     public Vector2Int GetGridPosition()
     {
         return gridPosition;
+    }
+
+    public List<Vector2Int> GetFullSnakeBodyGridPosition() 
+    {
+        //añademe un conjunto de elementos y luego la devuelves
+        List<Vector2Int> gridPositionList=new List<Vector2Int>() { gridPosition }; //lista de todas las posiciones cabeza+cuerpo
+        foreach(SnakeMovePosition snakeMovePosition in snakeMovePositionsList)
+        {
+            gridPositionList.Add(snakeMovePosition.GetGridPosition()); // de todas las partes, una por una, pillas la posicion
+        }
+        
+        return gridPositionList;
+    } 
+
+    private void CreateBodyPart() //me cuenta cuantas partes del cuerpo tengo, se llama siempre q come comida
+    {
+        //cabeza -->0, cuerpo -->-1,-2,-3,...
+        snakeBodyPartsList.Add(new SnakeBodyPart(snakeBodySize)); 
+    }
+    
+    private void UpdateBodyParts() //cada vez qyue me muevo necesito actualizarlo
+    {
+        for(int i = 0; i<snakeBodyPartsList.Count; i++)
+        {
+            snakeBodyPartsList[i].SetGridPosition(snakeMovePositionsList[i].GetGridPosition()); //solo quiero la posicion
+        }
     }
 }
 
