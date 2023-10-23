@@ -59,7 +59,7 @@ public class Snake : MonoBehaviour
         }
     }
 
-    private class SnakeMovePosition //saber la direccion que tiene que mirar cada parte del cuerpo
+    private class SnakeMovePosition //saber la direccion que tiene que mirar cada parte del cuerpo //constructor
     {
         private SnakeMovePosition previousSnakeMovePosition;
         private Vector2Int gridPosition;
@@ -136,7 +136,7 @@ public class Snake : MonoBehaviour
 
     private void HandleGridMovement()
     {
-        gridMoveTimer += Time.deltaTime;
+        gridMoveTimer += Time.deltaTime; //reinicia el tiempo
         if (gridMoveTimer >= gridMoveTimerMax)
         {
             gridMoveTimer -= gridMoveTimerMax;
@@ -152,6 +152,7 @@ public class Snake : MonoBehaviour
             snakeMovePositionsList.Insert(0, snakeMovePosition);
             //enchufando la ultima posicion actual se guarda en la lista--> pasa a ser la primera parte cu
 
+            //realacion entre direcones y vectores, left,right,down,up
             Vector2Int gridMoveDirectionVector;
             switch (gridMoveDirection)
             {
@@ -172,6 +173,16 @@ public class Snake : MonoBehaviour
             }
 
             gridPosition += gridMoveDirectionVector; 
+            //si me he comido una parte de mi cuerpo
+
+            foreach (SnakeMovePosition movePosition in snakeMovePositionsList)
+            {
+             //si coincide con cada una de las partes
+             if (gridMoveDirectionVector == movePosition.GetGridPosition())
+                {
+                    //GameOver
+                }
+            }
 
             // ¿He comido comida?
             bool snakeAteFod = levelGrid.TrySnakeEatFood(gridPosition);
@@ -197,7 +208,7 @@ public class Snake : MonoBehaviour
         }
     }
 
-    private void HandleMoveDirection() //relativo al movimeitno 2d
+    private void HandleMoveDirection() //relativo al movimeitno 2D
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");

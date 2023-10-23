@@ -17,7 +17,9 @@ public class GameManager : MonoBehaviour
 
         // Configurar el LevelGrid
         levelGrid = new LevelGrid(20, 20);
-        snake.Setup(levelGrid);
+       
+        //intercambian informacion vvvv
+        snake.Setup(levelGrid); 
         levelGrid.Setup(snake);
     }
 }
