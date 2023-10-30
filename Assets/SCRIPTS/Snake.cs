@@ -12,6 +12,11 @@ public class Snake : MonoBehaviour
         Down,
         Up
     }
+    private enum State
+    {
+        Alive,
+        Death
+    }
 
     private class SnakeBodyPart
     {
@@ -109,6 +114,8 @@ public class Snake : MonoBehaviour
     private List<SnakeMovePosition> snakeMovePositionsList; //posicion 2d + direccion a la que mirar
     private List<SnakeBodyPart> snakeBodyPartsList; //lista snakeBoyPart
 
+    private State state;
+
     private void Awake()
     {
         startGridPosition = new Vector2Int(0, 0);
@@ -120,12 +127,22 @@ public class Snake : MonoBehaviour
         snakeBodySize = 0;
         snakeMovePositionsList = new List<SnakeMovePosition>();
         snakeBodyPartsList=new List<SnakeBodyPart>(); //crear lista vacia
+
+        state = State.Alive;
     }
 
     private void Update()
     {
-        HandleMoveDirection();
-        HandleGridMovement();
+        switch (state)
+        {
+            case State.Alive:                //si estoy vivo
+                HandleMoveDirection();
+                HandleGridMovement();
+                break;
+            case State.Death:                //la serpiete no se mueve
+                break;
+        }
+        
     }
 
     public void Setup(LevelGrid levelGrid)
@@ -173,14 +190,16 @@ public class Snake : MonoBehaviour
             }
 
             gridPosition += gridMoveDirectionVector; 
+            gridPosition= levelGrid.ValidateGridPosition(gridPosition);
             //si me he comido una parte de mi cuerpo
 
             foreach (SnakeMovePosition movePosition in snakeMovePositionsList)
             {
              //si coincide con cada una de las partes
-             if (gridMoveDirectionVector == movePosition.GetGridPosition())
+             if (gridPosition == movePosition.GetGridPosition())
                 {
                     //GameOver
+                    state = State.Death;
                 }
             }
 

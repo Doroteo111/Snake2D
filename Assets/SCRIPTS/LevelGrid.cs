@@ -62,4 +62,39 @@ public class LevelGrid : MonoBehaviour
         foodSpriteRenderer.sprite = GameAssets.Instance.foodSprite;
         foodGameObject.transform.position = new Vector3(foodGridPosition.x, foodGridPosition.y, 0);
     }
+
+    public Vector2Int ValidateGridPosition(Vector2Int gridPosition)
+    {
+        int w = Half(width);
+        int h = Half(height);
+
+        //me salgo por la derecha
+
+        if (gridPosition.x > w)
+        {
+            gridPosition.x = -w;
+        }
+        //me salgo por la izquierda
+        if (gridPosition.x < -w)
+        {
+            gridPosition.x = w;
+        }
+        //me salgo por la arriba
+        if (gridPosition.y > h)
+        {
+            gridPosition.y = -h;
+        }
+        //me salgo por la abajo
+        if (gridPosition.y > -h)
+        {
+            gridPosition.y = h;
+        }
+
+        return gridPosition;
+    }
+
+    private int Half(int number)   //me divide
+    {
+        return number /2;
+    }
 }
