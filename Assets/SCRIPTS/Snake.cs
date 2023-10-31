@@ -105,7 +105,7 @@ public class Snake : MonoBehaviour
     private float horizontalInput, verticalInput;
 
     private float gridMoveTimer;
-    private float gridMoveTimerMax = 1f; // La serpiente se moverá a cada segundo
+    [SerializeField]private float gridMoveTimerMax = 0.5f; // La serpiente se moverá a cada segundo
 
     private LevelGrid levelGrid;
 
@@ -211,6 +211,8 @@ public class Snake : MonoBehaviour
                 snakeBodySize++;
                 //llamada la función
                 CreateBodyPart();
+                GameManager.Instance.AddScore(GameManager.POINTS);
+                
             }
 
             if (snakeMovePositionsList.Count > snakeBodySize) //elimina la coordenada restante

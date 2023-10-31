@@ -4,9 +4,23 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private LevelGrid levelGrid;
-    private Snake snake;
+   public static GameManager Instance { get; private set; }
+    private ScoreUI scoreUIScript;
 
+    public const int POINTS = 100; //constantes en mayus
+    private int score; // puntuación jugador
+   private LevelGrid levelGrid;
+   private Snake snake;
+    private void Awake()
+    {
+        // Singleton
+        if (Instance != null)
+        {
+            Debug.LogError("There is more than one Instance");
+        }
+
+        Instance = this;
+    }
     private void Start()
     {
         // Configuración de la cabeza de serpiente
@@ -21,5 +35,19 @@ public class GameManager : MonoBehaviour
         //intercambian informacion vvvv
         snake.Setup(levelGrid); 
         levelGrid.Setup(snake);
+
+        scoreUIScript = GetComponentInChildren<ScoreUI>();
+        score = 0;
+        AddScore(0);
+    }
+    public int GetScore()    // de lectura
+    {
+        return score;
+    }
+
+    public void AddScore (int pointsToAdd)
+    {
+        score += pointsToAdd; 
+        scoreUIScript.UpdateScoreText(score);
     }
 }

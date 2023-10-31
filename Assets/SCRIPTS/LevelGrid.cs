@@ -85,7 +85,7 @@ public class LevelGrid : MonoBehaviour
             gridPosition.y = -h;
         }
         //me salgo por la abajo
-        if (gridPosition.y > -h)
+        if (gridPosition.y < -h)
         {
             gridPosition.y = h;
         }
