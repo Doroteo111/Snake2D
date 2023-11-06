@@ -200,6 +200,7 @@ public class Snake : MonoBehaviour
                 {
                     //GameOver
                     state = State.Death;
+                    GameManager.Instance.SnakeDied(); //*******************************************************
                 }
             }
 

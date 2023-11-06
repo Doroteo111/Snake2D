@@ -50,4 +50,9 @@ public class GameManager : MonoBehaviour
         score += pointsToAdd; 
         scoreUIScript.UpdateScoreText(score);
     }
+
+    public void SnakeDied()  // aseguramos que enseña el panel , lo llamamos en el snake cuando muere (en STATE)
+    {
+        GameOverUI.Instance.Show(); 
+    }
 }
