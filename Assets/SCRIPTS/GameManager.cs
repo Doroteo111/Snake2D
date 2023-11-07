@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
     private int score; // puntuación jugador
    private LevelGrid levelGrid;
    private Snake snake;
+
+    private bool isPaused;
     private void Awake()
     {
         // Singleton
@@ -23,6 +25,8 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
+        //SoundManager.CreateSoundManagerGameObject;
+
         // Configuración de la cabeza de serpiente
         GameObject snakeHeadGameObject = new GameObject("Snake Head");
         SpriteRenderer snakeSpriteRenderer = snakeHeadGameObject.AddComponent<SpriteRenderer>();
@@ -40,6 +44,22 @@ public class GameManager : MonoBehaviour
         score = 0;
         AddScore(0);
     }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (isPaused) 
+            {
+                ResumeGame();
+            }
+            else
+            {
+                PauseGame();
+            }
+           // isPaused = !isPaused; //negación- conseguir el contrario
+        }
+    }
     public int GetScore()    // de lectura
     {
         return score;
@@ -54,5 +74,20 @@ public class GameManager : MonoBehaviour
     public void SnakeDied()  // aseguramos que enseña el panel , lo llamamos en el snake cuando muere (en STATE)
     {
         GameOverUI.Instance.Show(); 
+    }
+
+    public void PauseGame()
+    {
+      Time.timeScale = 0f;
+      PauseUI.Instance.Show();
+        isPaused = true;
+
+    }
+
+    public void ResumeGame()
+    {
+        Time.timeScale = 1f;
+        PauseUI.Instance.Hide();
+        isPaused = false;
     }
 }
