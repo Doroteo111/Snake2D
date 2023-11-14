@@ -4,15 +4,13 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-   public static GameManager Instance { get; private set; }
-    private ScoreUI scoreUIScript;
+    public static GameManager Instance { get; private set; }
 
-    public const int POINTS = 100; //constantes en mayus
-    private int score; // puntuación jugador
-   private LevelGrid levelGrid;
-   private Snake snake;
+    private LevelGrid levelGrid;
+    private Snake snake;
 
     private bool isPaused;
+
     private void Awake()
     {
         // Singleton
@@ -23,9 +21,10 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
     }
+
     private void Start()
     {
-        //SoundManager.CreateSoundManagerGameObject;
+        SoundManager.CreateSoundManagerGameObject();
 
         // Configuración de la cabeza de serpiente
         GameObject snakeHeadGameObject = new GameObject("Snake Head");
@@ -35,21 +34,26 @@ public class GameManager : MonoBehaviour
 
         // Configurar el LevelGrid
         levelGrid = new LevelGrid(20, 20);
-       
-        //intercambian informacion vvvv
-        snake.Setup(levelGrid); 
+        snake.Setup(levelGrid);
         levelGrid.Setup(snake);
 
-        scoreUIScript = GetComponentInChildren<ScoreUI>();
-        score = 0;
-        AddScore(0);
+        // Inicializo tema score
+        Score.InitializeStaticScore();
+
+        isPaused = false;
     }
 
     private void Update()
     {
+        // if (Input.GetKeyDown(KeyCode.R))
+        // {
+        //     Loader.Load(Loader.Scene.Game);
+        // }
+
+        // Lógica de Pause con tecla Escape
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (isPaused) 
+            if (isPaused)
             {
                 ResumeGame();
             }
@@ -57,31 +61,19 @@ public class GameManager : MonoBehaviour
             {
                 PauseGame();
             }
-           // isPaused = !isPaused; //negación- conseguir el contrario
         }
     }
-    public int GetScore()    // de lectura
-    {
-        return score;
-    }
 
-    public void AddScore (int pointsToAdd)
+    public void SnakeDied()
     {
-        score += pointsToAdd; 
-        scoreUIScript.UpdateScoreText(score);
-    }
-
-    public void SnakeDied()  // aseguramos que enseña el panel , lo llamamos en el snake cuando muere (en STATE)
-    {
-        GameOverUI.Instance.Show(); 
+        GameOverUI.Instance.Show(Score.TrySetNewHighScore());
     }
 
     public void PauseGame()
     {
-      Time.timeScale = 0f;
-      PauseUI.Instance.Show();
+        Time.timeScale = 0f;
+        PauseUI.Instance.Show();
         isPaused = true;
-
     }
 
     public void ResumeGame()

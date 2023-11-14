@@ -18,7 +18,7 @@ public static class SoundManager  // clase statica
     private static GameObject soundManagerGameObject; //hacerla global
     private static AudioSource audioSource;
 
-    private static void CreateSoundManagerGameObject()
+   public static void CreateSoundManagerGameObject()
     {
         {
             if (soundManagerGameObject == null)

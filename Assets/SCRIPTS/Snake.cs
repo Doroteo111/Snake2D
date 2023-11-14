@@ -214,7 +214,7 @@ public class Snake : MonoBehaviour
                 snakeBodySize++;
                 //llamada la función
                 CreateBodyPart();
-                GameManager.Instance.AddScore(GameManager.POINTS);
+               Score.AddScore(Score.POINTS);
                 
             }
 

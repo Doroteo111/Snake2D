@@ -1,32 +1,50 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class GameOverUI : MonoBehaviour
 {
-    [SerializeField] private Button restartButton;
+    // Singleton
     public static GameOverUI Instance { get; private set; }
+
+    [SerializeField] private Button restartButton;
+
+    [SerializeField] private TextMeshProUGUI messsageText;
+    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI highScoreText;
 
     private void Awake()
     {
-        restartButton.onClick.AddListener(() => { Loader.Load(Loader.Scene.Game); });
-        // Singleton
         if (Instance != null)
         {
-            Debug.LogError("There is more than one Instance");
+            Debug.LogError("More than one Instance");
         }
 
         Instance = this;
+
+        restartButton.onClick.AddListener(() => { Loader.Load(Loader.Scene.Game); });
+
         Hide();
     }
-    public void Show()
+
+    public void Show(bool hasNewHighScore)
     {
+        UpdateScoreAndHighScore(hasNewHighScore);
         gameObject.SetActive(true);
     }
 
     public void Hide()
     {
         gameObject.SetActive(false);
+    }
+
+    private void UpdateScoreAndHighScore(bool hasNewHighScore)
+    {
+        scoreText.text = Score.GetScore().ToString();
+        highScoreText.text = Score.GetHighScore().ToString();
+        messsageText.text = hasNewHighScore ? "CONGRATULATIONS" : "DON'T WORRY, NEXT TIME";
+
     }
 }
