@@ -21,7 +21,7 @@ public class MainMenuUI : MonoBehaviour
 
         //quitHowToPlayPanelButton.onClick.AddListener(HideHowToPlayPanel);
 
-        //HideHowToPlayPanel();
+        HideHowToPlayPanel();
     }
 
     private void ShowHowToPlayPanel()

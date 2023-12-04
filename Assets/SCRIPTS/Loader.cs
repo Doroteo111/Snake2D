@@ -5,12 +5,10 @@ using UnityEngine.SceneManagement;
 using System;
 
 public static class Loader // clase estatica --> no hace falta que este instanciada para usarla
-                           // tiene todas sus variables y funviones tambien static
+                           // tiene todas sus variables y funciones tambien static
     {
         // Variable que guarda una función sin inputs ni output
         private static Action loaderCallbackAction;
-
-        // Una clase static tiene todas sus variables y funciones también static
 
         // Lista de nuestras escenas
         public enum Scene
