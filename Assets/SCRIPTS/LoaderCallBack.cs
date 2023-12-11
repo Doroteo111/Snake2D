@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCounters;
 using TMPro;
 
 public class LoaderCallBack : MonoBehaviour
@@ -36,14 +36,13 @@ public class LoaderCallBack : MonoBehaviour
     private float spawnRate = 2f;
 
 
-
+   
     private void Start()
     {
-        timeBeforeLoading=Random.Range( 5, 10);
-
-      
+        timeBeforeLoading = Random.Range(5,10); // give a random number between 5-10 --> will be seconds
+        
+        StartCoroutine(PhrasesPerSeconds()); //Array text, show a message every 2 seconds randomly
         StartCoroutine(countDown()); // counter to help myself
-        StartCoroutine(PhrasesPerSeconds()); //Array text, show a random message every 2 seconds randomly
 
     }
     private void Update()
@@ -56,18 +55,21 @@ public class LoaderCallBack : MonoBehaviour
     {
         timeElapsed += Time.deltaTime;
 
-        if (timeElapsed > timeBeforeLoading) //cuando pasé el numero asignado cambiara de escena
+        if (timeElapsed > timeBeforeLoading) //when the random seconds comes to end, will change the scene
         {
-            SceneManager.LoadScene(0);
+            // Loader.LoaderCallback(); no va, he de fozar el scene manager
+            SceneManager.LoadScene(2);
         }
     }
-    private IEnumerator countDown() //previsualizar los segundos que pasan AJUDA VISUA PARA MI
+    private IEnumerator countDown() //preview every second (VISUAL) 
     {
         while (true)
         {
-            yield return new WaitForSeconds(1);
             counterText.text = $"{contadorEjemplo}";
             contadorEjemplo++;
+            yield return new WaitForSeconds(1);
+        
+          
         }
 
     }
@@ -76,15 +78,11 @@ public class LoaderCallBack : MonoBehaviour
     {
         while (true)
         {
+            int randomIndex = Random.Range(0, phrasesExamples.Length);
+            tipsText.text = $">>{(phrasesExamples[randomIndex])}<<";
             yield return new WaitForSeconds(spawnRate);
-           int randomIndex = Random.Range(0, phrasesExamples.Length);
-           tipsText.text = $">>{(phrasesExamples[randomIndex])}<<";
+           
 
         }
     }
-
-
-
-    // CTRL + K + C --> Comentar selección
-    // CTRL + K + U --> Descomentar selección
 }
