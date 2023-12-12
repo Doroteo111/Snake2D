@@ -39,19 +39,20 @@ public class LoaderCallBack : MonoBehaviour
    
     private void Start()
     {
-        timeBeforeLoading = Random.Range(5,10); // give a random number between 5-10 --> will be seconds
-        
-        StartCoroutine(PhrasesPerSeconds()); //Array text, show a message every 2 seconds randomly
-        StartCoroutine(countDown()); // counter to help myself
+       timeBeforeLoading = Random.Range(5,10); // give a random number between 5-10 --> will be seconds
+        StartCoroutine(ChangeSceneCoroutine()); // coroutine change scene
 
+        StartCoroutine(PhrasesPerSeconds()); //Array text, show a message every 2 seconds randomly
+        StartCoroutine(CountDown()); // counter to help myself
+        
+       //CountDown2();
     }
     private void Update()
     {
-        ChangeScene();
- 
+        //ChangeScene();
     }
 
-    private void ChangeScene()
+   /* private void ChangeScene()
     {
         timeElapsed += Time.deltaTime;
 
@@ -61,27 +62,44 @@ public class LoaderCallBack : MonoBehaviour
             SceneManager.LoadScene(2);
         }
     }
-    private IEnumerator countDown() //preview every second (VISUAL) 
+   */
+
+    private IEnumerator ChangeSceneCoroutine()
+    {
+        while(true)
+        { 
+            yield return new WaitForSeconds(timeBeforeLoading);
+           
+            SceneManager.LoadScene(2);
+        }
+    }
+    
+    private IEnumerator CountDown() //preview every second (VISUAL) 
     {
         while (true)
         {
             counterText.text = $"{contadorEjemplo}";
             contadorEjemplo++;
             yield return new WaitForSeconds(1);
-        
           
         }
 
     }
 
+
+    private int oldRandomIdx = -1;
     public IEnumerator PhrasesPerSeconds()
     {
         while (true)
         {
             int randomIndex = Random.Range(0, phrasesExamples.Length);
+            while(randomIndex == oldRandomIdx)
+            {
+                randomIndex = Random.Range(0, phrasesExamples.Length);
+            }
+            oldRandomIdx = randomIndex;
             tipsText.text = $">>{(phrasesExamples[randomIndex])}<<";
             yield return new WaitForSeconds(spawnRate);
-           
 
         }
     }
