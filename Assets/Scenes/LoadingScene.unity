@@ -1086,12 +1086,12 @@ MonoBehaviour:
   tipsText: {fileID: 808229412}
   phrasesExamples:
   - movment with "w,a,s,d"
-  - Collect al the fruits!!
-  - Remember, you died when the snake touch their own body
+  - Collect all the fruits!!
+  - Remember, you die when the snake touches its own body
   - Look up for power ups!
   - Beat your record !!!
-  - Use the bouders to teleport to the other side
-  - Try other difficulty leves
+  - Use the edges to teleport to the other side
+  - Try other difficulty levels
   - i dont know what to add lol
   - gg hf gl jungle diff
   - waiting . . .

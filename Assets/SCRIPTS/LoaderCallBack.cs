@@ -42,10 +42,8 @@ public class LoaderCallBack : MonoBehaviour
        timeBeforeLoading = Random.Range(5,10); // give a random number between 5-10 --> will be seconds
         StartCoroutine(ChangeSceneCoroutine()); // coroutine change scene
 
+        StartCoroutine(CountDown()); // counter to help myself 
         StartCoroutine(PhrasesPerSeconds()); //Array text, show a message every 2 seconds randomly
-        StartCoroutine(CountDown()); // counter to help myself
-        
-       //CountDown2();
     }
     private void Update()
     {
